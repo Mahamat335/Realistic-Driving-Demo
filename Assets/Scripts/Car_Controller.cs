@@ -145,7 +145,7 @@ public class Car_Controller : MonoBehaviour
         start = false;
         while (rpm > 0)
         {
-            rpm -= Time.fixedDeltaTime * 20000f;
+            rpm -= Time.fixedDeltaTime * 15000f;
             CalculateRPM();
             CalculateSpeed();
             Move();
@@ -155,6 +155,7 @@ public class Car_Controller : MonoBehaviour
         kph = 0;
 
         //endgame animations
+
 
     }
 

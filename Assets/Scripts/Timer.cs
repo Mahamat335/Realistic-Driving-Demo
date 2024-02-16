@@ -1,11 +1,13 @@
 using System.Collections;
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
 
 public class Timer : MonoBehaviour
 {
     [SerializeField] private TMP_Text countdownText;
     [SerializeField] private TMP_Text chronometer;
+    [SerializeField] private GameObject endGameUI;
     private float countdownDuration = 5f;
     [SerializeField] private AnimationCurve scaleCurve;
 
@@ -66,6 +68,22 @@ public class Timer : MonoBehaviour
                 timerRunning = false;
         }
         StartCoroutine(carController.EndGame());
+
+        // End Game Animations
+        RectTransform rectTransform = chronometer.GetComponent<RectTransform>();
+        float elapsedTime = 0f, duration = 0.75f;
+        Vector2 targetPosition = new Vector2(0f, 125f);
+        Color panelColor = chronometer.transform.parent.GetComponent<Image>().color;
+        while (panelColor.a != 0.4f)
+        {
+            elapsedTime += Time.fixedDeltaTime;
+            float t = elapsedTime / duration;
+            rectTransform.anchoredPosition = Vector2.Lerp(rectTransform.anchoredPosition, targetPosition, t);
+            panelColor.a = Mathf.Lerp(panelColor.a, 0.4f, t);
+            chronometer.transform.parent.GetComponent<Image>().color = panelColor;
+            yield return new WaitForFixedUpdate();
+        }
+        endGameUI.SetActive(true);
     }
 
     private void UpdateChronometerText()
