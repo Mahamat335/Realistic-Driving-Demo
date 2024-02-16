@@ -64,7 +64,7 @@ public class Car_Controller : MonoBehaviour
     {
         if (Input.GetKey(KeyCode.W) || gasPedal)
         {
-            rpm += Time.fixedDeltaTime * 3000f;
+            rpm += Time.fixedDeltaTime * (3000f - kph * 10);
         }
         else
         {
