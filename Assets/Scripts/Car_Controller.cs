@@ -22,6 +22,8 @@ public class Car_Controller : MonoBehaviour
     [SerializeField] private float rpmForLowerGear;
     [SerializeField] private float rpmForHigherGear;
     [SerializeField] private float newRpmForNewGear;
+    [SerializeField] private Light[] breakLights;
+    private const float breakLightIntensity = 3.5f;
     private const float gearConstant = 1.435f;
     private bool start;
     private bool gasPedal = false, breakPedal = false;
@@ -76,6 +78,13 @@ public class Car_Controller : MonoBehaviour
         if (Input.GetKey(KeyCode.S) || breakPedal)
         {
             rpm -= Time.fixedDeltaTime * 2000f;
+            breakLights[0].intensity = breakLightIntensity;
+            breakLights[1].intensity = breakLightIntensity;
+        }
+        else if (breakLights[0].intensity > 0)
+        {
+            breakLights[0].intensity = 0;
+            breakLights[1].intensity = 0;
         }
 
         rpm = Mathf.Clamp(rpm, minRPM, maxRPM);
@@ -153,9 +162,11 @@ public class Car_Controller : MonoBehaviour
         }
         rpm = 0;
         kph = 0;
-
-        //endgame animations
-
+        if (breakLights[0].intensity > 0)
+        {
+            breakLights[0].intensity = 0;
+            breakLights[1].intensity = 0;
+        }
 
     }
 
