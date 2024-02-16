@@ -24,6 +24,7 @@ public class Car_Controller : MonoBehaviour
     [SerializeField] private float newRpmForNewGear;
     private const float gearConstant = 1.435f;
     private bool start;
+    private bool gasPedal = false, breakPedal = false;
     void Start()
     {
         wheelDiameter = wheels[0].GetComponent<MeshRenderer>().bounds.size.x;
@@ -61,7 +62,7 @@ public class Car_Controller : MonoBehaviour
     }
     void HandleInput()
     {
-        if (Input.GetKey(KeyCode.W))
+        if (Input.GetKey(KeyCode.W) || gasPedal)
         {
             rpm += Time.fixedDeltaTime * 3000f;
         }
@@ -72,14 +73,9 @@ public class Car_Controller : MonoBehaviour
                 rpm -= Time.fixedDeltaTime * 2000;
         }
 
-        if (Input.GetKey(KeyCode.S))
+        if (Input.GetKey(KeyCode.S) || breakPedal)
         {
             rpm -= Time.fixedDeltaTime * 2000f;
-        }
-
-        if (Input.GetKey(KeyCode.R) && kph == 0)
-        {
-
         }
 
         rpm = Mathf.Clamp(rpm, minRPM, maxRPM);
@@ -123,6 +119,43 @@ public class Car_Controller : MonoBehaviour
     public void SetStart(bool start)
     {
         this.start = start;
+    }
+
+    public void GasPedalDown()
+    {
+        gasPedal = true;
+    }
+
+    public void BreakPedalDown()
+    {
+        breakPedal = true;
+    }
+    public void GasPedalUp()
+    {
+        gasPedal = false;
+    }
+
+    public void BreakPedalUp()
+    {
+        breakPedal = false;
+    }
+
+    public IEnumerator EndGame()
+    {
+        start = false;
+        while (rpm > 0)
+        {
+            rpm -= Time.fixedDeltaTime * 20000f;
+            CalculateRPM();
+            CalculateSpeed();
+            Move();
+            yield return new WaitForFixedUpdate();
+        }
+        rpm = 0;
+        kph = 0;
+
+        //endgame animations
+
     }
 
 

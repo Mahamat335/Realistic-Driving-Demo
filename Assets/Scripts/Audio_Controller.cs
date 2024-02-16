@@ -47,6 +47,10 @@ public class Audio_Controller : MonoBehaviour
             if (rpm > 0)
             {
                 audioSource.pitch = 0.5f + rpm / 8000f;
+                if (rpm > 8000)
+                {
+                    audioSource.pitch += (rpm - 8000) * 0.000125f;
+                }
                 if (audioSource.clip == idleClip)
                 {
                     audioSource.clip = accelerateClip;

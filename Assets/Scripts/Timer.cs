@@ -5,11 +5,13 @@ using TMPro;
 public class Timer : MonoBehaviour
 {
     [SerializeField] private TMP_Text countdownText;
+    [SerializeField] private TMP_Text chronometer;
     private float countdownDuration = 5f;
     [SerializeField] private AnimationCurve scaleCurve;
 
     private float currentTime;
     private Car_Controller carController;
+    private bool timerRunning = false;
 
     void Start()
     {
@@ -17,7 +19,7 @@ public class Timer : MonoBehaviour
         carController = GameObject.FindWithTag("Player").GetComponent<Car_Controller>();
     }
 
-    IEnumerator StartCountdown()
+    private IEnumerator StartCountdown()
     {
         int countdownValue = Mathf.CeilToInt(countdownDuration);
         countdownText.text = countdownValue.ToString();
@@ -33,9 +35,11 @@ public class Timer : MonoBehaviour
         }
         countdownText.text = "";
         carController.SetStart(true);
+        timerRunning = true;
+        StartCoroutine(ChronometerCoroutine());
     }
 
-    IEnumerator ScaleDownText()
+    private IEnumerator ScaleDownText()
     {
         Vector3 initialScale = countdownText.transform.localScale;
         float elapsedTime = 0f;
@@ -49,5 +53,28 @@ public class Timer : MonoBehaviour
         }
 
         countdownText.transform.localScale = initialScale;
+    }
+    private IEnumerator ChronometerCoroutine()
+    {
+        while (timerRunning)
+        {
+            currentTime += Time.fixedDeltaTime;
+            UpdateChronometerText();
+            if (carController.transform.position.x < 1000)
+                yield return new WaitForFixedUpdate();
+            else
+                timerRunning = false;
+        }
+        StartCoroutine(carController.EndGame());
+    }
+
+    private void UpdateChronometerText()
+    {
+        int minutes = Mathf.FloorToInt(currentTime / 60f);
+        int seconds = Mathf.FloorToInt(currentTime % 60f);
+        int milliseconds = Mathf.FloorToInt((int)(currentTime * 1000f) % 1000f);
+
+        string timerText = string.Format("{0:00}:{1:00}:{2:00}", minutes, seconds, milliseconds);
+        chronometer.text = timerText;
     }
 }
