@@ -23,17 +23,24 @@ public class Car_Controller : MonoBehaviour
     [SerializeField] private float rpmForHigherGear;
     [SerializeField] private float newRpmForNewGear;
     private const float gearConstant = 1.435f;
+    private bool start;
     void Start()
     {
         wheelDiameter = wheels[0].GetComponent<MeshRenderer>().bounds.size.x;
+        start = false;
+        rpm = 0;
+        kph = 0;
     }
 
     private void FixedUpdate()
     {
-        HandleInput();
-        CalculateRPM();
-        CalculateSpeed();
-        Move();
+        if (start)
+        {
+            HandleInput();
+            CalculateRPM();
+            CalculateSpeed();
+            Move();
+        }
     }
 
     private void LateUpdate()
@@ -56,13 +63,13 @@ public class Car_Controller : MonoBehaviour
     {
         if (Input.GetKey(KeyCode.W))
         {
-            rpm += Time.fixedDeltaTime * 4000f;
+            rpm += Time.fixedDeltaTime * 3000f;
         }
         else
         {
-            rpm -= Time.fixedDeltaTime * 500;
+            rpm -= Time.fixedDeltaTime * 400;
             if (rpm > rpmForHigherGear)
-                rpm -= 1500;
+                rpm -= Time.fixedDeltaTime * 2000;
         }
 
         if (Input.GetKey(KeyCode.S))
@@ -83,7 +90,7 @@ public class Car_Controller : MonoBehaviour
         if (rpm >= rpmForHigherGear && currentGear < maxGear)
         {
             currentGear++;
-            rpm = kph * rpmForHigherGear / maxSpeeds[currentGear - 1]; Debug.Log(rpm);
+            rpm = kph * rpmForHigherGear / maxSpeeds[currentGear - 1];
         }
         else if (currentGear > 1 && rpm <= rpmForLowerGear && kph < maxSpeeds[currentGear - 2])
         {
@@ -103,6 +110,20 @@ public class Car_Controller : MonoBehaviour
             kph = maxSpeeds[currentGear - 1];
     }
 
+    public float GetRpm()
+    {
+        return rpm;
+    }
+
+    public bool GetStart()
+    {
+        return start;
+    }
+
+    public void SetStart(bool start)
+    {
+        this.start = start;
+    }
 
 
 }
