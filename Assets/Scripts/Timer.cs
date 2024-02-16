@@ -8,17 +8,19 @@ public class Timer : MonoBehaviour
     [SerializeField] private TMP_Text countdownText;
     [SerializeField] private TMP_Text chronometer;
     [SerializeField] private GameObject endGameUI;
+    [SerializeField] private GameObject highScoreImage;
     private float countdownDuration = 5f;
     [SerializeField] private AnimationCurve scaleCurve;
 
     private float currentTime;
     private Car_Controller carController;
     private bool timerRunning = false;
-
+    private High_Score highScoreScript;
     void Start()
     {
         StartCoroutine(StartCountdown());
         carController = GameObject.FindWithTag("Player").GetComponent<Car_Controller>();
+        highScoreScript = GameObject.Find("EventSystem").GetComponent<High_Score>();
     }
 
     private IEnumerator StartCountdown()
@@ -66,6 +68,12 @@ public class Timer : MonoBehaviour
                 yield return new WaitForFixedUpdate();
             else
                 timerRunning = false;
+        }
+
+        if (highScoreScript.GetHighScore() != 0f && highScoreScript.GetHighScore() > currentTime)
+        {
+            highScoreScript.SetHighScore(currentTime);
+            highScoreImage.SetActive(true);
         }
         StartCoroutine(carController.EndGame());
 
