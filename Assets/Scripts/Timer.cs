@@ -70,7 +70,7 @@ public class Timer : MonoBehaviour
                 timerRunning = false;
         }
 
-        if (highScoreScript.GetHighScore() != 0f && highScoreScript.GetHighScore() > currentTime)
+        if (highScoreScript.GetHighScore() == 0f || highScoreScript.GetHighScore() > currentTime)
         {
             highScoreScript.SetHighScore(currentTime);
             highScoreImage.SetActive(true);
